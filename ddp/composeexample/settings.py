@@ -25,7 +25,7 @@ SECRET_KEY = 'eens2_gdnc@!g*5gn4rlf0a48uh+49v2$1s%nm(9mhg(1m*!&t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 
 # Application definition
@@ -77,8 +77,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
+        'PASSWORD': os.environ.get("POSTGRES_PASSWORD", "112233"),
         'USER': 'postgres',
-        'HOST': 'db',
+        'HOST': os.environ.get("POSTGRES_HOST", "localhost"),
         'PORT': 5432,
     }
 }
@@ -114,6 +115,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+POSTGRES_HOST_AUTH_METHOD = 'trust'
 
 
 # Static files (CSS, JavaScript, Images)

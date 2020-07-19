@@ -1,14 +1,50 @@
-version: '3'
+version: '3.7'
+
 services:
   db:
+    container_name: db
     image: postgres
-  web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/code
+    hostname: db
+    environment: 
+      - POSTGRES_PASSWORD=test123test
+    volumes: 
+      - ../data/postgres:/var/lib/postgresql/data
     ports:
-      - "8000:8000"
+      - 5432:5432
+    networks:
+      - djangonetwork
+    restart: on-failure:10
+  db-ui:
+    container_name: db-ui
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.ts
+      PGADMIN_DEFAULT_PASSWORD: 123123123
+    volumes:
+        - ../data/pgadmin:/root/.pgadmin
+    ports:
+      - 8001:80
+    networks:
+      - djangonetwork
+    restart: on-failure:10
+  web:
+    container_name: web
+    build: .
+    hostname: web
+    environment: 
+      - POSTGRES_PASSWORD=test123test
+      - POSTGRES_HOST=db
+    ports:
+      - 8000:8000
+    command: "python manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
-      
+    networks:
+      - djangonetwork
+    restart: on-failure:10
+
+networks:
+  djangonetwork:
+    external:
+      name: djangonetwork 
+
