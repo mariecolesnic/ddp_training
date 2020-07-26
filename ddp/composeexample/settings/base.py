@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -22,10 +22,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'eens2_gdnc@!g*5gn4rlf0a48uh+49v2$1s%nm(9mhg(1m*!&t'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#https://www.eidel.io/2017/07/10/dockerizing-django-uwsgi-postgres/
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+if os.getenv('DJANGO_ENV') == 'prod':
+    DEBUG = False
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0:8000']
+    # ...
+else:
+    DEBUG = True
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0:8000']
 
 
 # Application definition
@@ -73,16 +78,7 @@ WSGI_APPLICATION = 'composeexample.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'PASSWORD': os.environ.get("POSTGRES_PASSWORD", "112233"),
-        'USER': 'postgres',
-        'HOST': os.environ.get("POSTGRES_HOST", "localhost"),
-        'PORT': 5432,
-    }
-}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
